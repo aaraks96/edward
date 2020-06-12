@@ -10,6 +10,7 @@ import cv2
 import math
 
 #aara
+# gsgds
 # initialize the Raspberry Pi camera
 print("Initializing Pi Camera......")
 camera = PiCamera()
