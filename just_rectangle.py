@@ -9,7 +9,7 @@ import time
 import cv2
 import math
 
-
+#aara
 # initialize the Raspberry Pi camera
 print("Initializing Pi Camera......")
 camera = PiCamera()
@@ -96,7 +96,6 @@ def get_angle(x,y):
         direction = 's'
     
     angle = np.abs(diff) * 0.07
-    #comment
 
     return angle, direction
 
