@@ -9,8 +9,6 @@ import time
 import cv2
 import math
 
-#aara
-# gsgds
 # initialize the Raspberry Pi camera
 print("Initializing Pi Camera......")
 camera = PiCamera()
@@ -65,6 +63,53 @@ def gameover():
     gpio.output(37, False)
     gpio.cleanup()
     
+
+def get_target(pic):
+      
+    for frame in camera.capture_continuous(rawCapture, format="bgr", use_video_port=True):
+    # grab the current frame
+        image = frame.array
+        # show the frame to our screen
+        #image = cv2.flip(image, -1)
+        #cv2.imshow("output", image)
+               
+        hsv_image = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
+        #cv2.imshow("hsv", hsv_image)
+        mask = cv2.inRange(hsv_image, lower_mask, upper_mask)
+        #cv2.imshow("mask", mask)
+        #cv2.waitKey(0)
+        _,cnts,h = cv2.findContours(mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+        if len(cnts)==0:
+            rawCapture.truncate(0)
+            print("no target found")
+            return None, None           
+        else:
+            rawCapture.truncate(0)
+            print("Target obtained")
+            cnts_sorted = sorted(cnts, key=cv2.contourArea)
+            area = cv2.contourArea(cnts_sorted[-1])
+            
+            if area <70.0:
+                print("Target not big enough")
+                return None, None
+                
+            hull = cv2.convexHull(cnts_sorted[-1])
+            (x,y),radius = cv2.minEnclosingCircle(hull)
+            print("Circle center", (x,y))
+            circled_image = cv2.circle(image,(int(x),int(y)),int(radius),(0,0,255),4)
+            cv2.line(circled_image, (310,240), (330, 240), (0,0,0), 1)
+            cv2.line(circled_image, (320,230), (320, 250), (0,0,0), 1)
+            
+            key = cv2.waitKey(1) & 0xFF
+            # clear the stream in preparation for the next frame
+            rawCapture.truncate(0)
+            # press the 'q' key to stop the video stream
+            if key == ord("p"):
+                #print(sum_1)
+                break
+            
+            return x,y
+
     
 def get_pic():
       
@@ -100,25 +145,32 @@ def get_angle(x,y):
 
     return angle, direction
 
-def self_orient(pos,angle):
+def self_orient(pic,pos,angle):
+    flag = False
     #scan environment for target object    
-    x,y, pos, angle = get_target(pos, angle)
+    x,y = get_target(pic)
     print("Current vehicle orientation(line 137): ",angle)
       
     #once found (hull is not empty), stop moving, get angle     
-    degree, direction = get_angle(x,y)
-    print("ANGLE AND DIRECTION: ", degree, direction)
+    if x is not None:
+        flag = True
+        degree, direction = get_angle(x,y)
+        print("ANGLE AND DIRECTION: ", degree, direction)
+        
+        #turn for said angle
+        if direction is None:
+            return pos, angle, flag
+        if direction == 'a':        
+            pos, angle = left(degree, pos, angle)
+            print("Current vehicle orientation(line 148): ",angle)
+        if direction == 's':        
+            pos, angle = right(degree, pos, angle)
+            print("Current vehicle orientation(line 152): ",angle)
+            
+    else:
+        return pos, angle, flag
     
-    #turn for said angle
-    if direction is None:
-        return pos, angle
-    if direction == 'a':        
-        pos, angle = left(degree, pos, angle)
-        print("Current vehicle orientation(line 148): ",angle)
-    if direction == 's':        
-        pos, angle = right(degree, pos, angle)
-        print("Current vehicle orientation(line 152): ",angle)
-    return pos, angle
+    return pos, angle, flag
     
 def distance():
     gpio.setmode(gpio.BOARD)
@@ -368,8 +420,8 @@ else:
     lower_mask = np.array([0, 0, 25])
     upper_mask = np.array([192, 88, 63])
 
-arena_l = 1.80
-arena_b = 0.80
+arena_l = 3.00
+arena_b = 1.50
 
 ######## NEW PIPELINE ##############
 
@@ -379,6 +431,15 @@ pic_count = 0
 #turn 45 degrees and take a picture
 pos, angle = left(45, pos, angle)  # maneuver 1
 pic = get_pic()
+pos, angle, flag = self_orient(pic,pos,angle) #oriented (or not) with target.
+
+if flag == False:
+    continue
+else:
+    dist_to_obs = distance()
+    
+    
+    
 cv2.imwrite('image_'+str(pic_count)+'.jpeg', pic)
 pic_count+=1
 
