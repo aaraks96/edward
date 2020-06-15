@@ -1,6 +1,6 @@
 import math
 import numpy as np
-# from src.map import maps
+from src.Map import Map_plot as map
 
 # class robot:
 #
@@ -78,7 +78,7 @@ import numpy as np
 class edward_bot:
 
     # def __init__(self, robot_radius, x_step, y_step, theta_step, resolution, map_supplied :maps):
-    def __init__(self,x_step, y_step, theta_step, resolution):
+    def __init__(self,x_step, y_step, theta_step, resolution, map_supplied :map):
         '''
 
         :param x_step: Step size in x-direction
@@ -89,6 +89,7 @@ class edward_bot:
 
         # self.map = map_supplied
         self.res = resolution
+        self.map = map_supplied
         # self.robot_radius = robot_radius
 
         self.x_step =  x_step
@@ -103,11 +104,11 @@ class edward_bot:
         :return: returns a bool, if the action is valid or not
         '''
 
-        validity = False
+        # validity = False
         new_x = action[0]
         new_y = action[1]
 
-        if new_x >=  self.map.min_x  and new_y >=  self.map.min_y and new_x <=  self.map.max_x and new_y <=  self.map.max_y:
+        if new_x >=  self.map.x_min  and new_y >=  self.map.y_min and new_x <=  self.map.x_max and new_y <=  self.map.y_max:
             validity = True
 
         else:
@@ -127,7 +128,7 @@ class edward_bot:
         x_new = action[0]
         y_new = action[1]
 
-        cost = np.sqrt((cur_x-x_new)**2 + (cur_y-y_new)**2)
+        cost = round(np.sqrt((cur_x-x_new)**2 + (cur_y-y_new)**2))
 
         return cost
 
@@ -145,25 +146,25 @@ class edward_bot:
 
         left = [current_x + self.x_step * math.cos( current_theta + self.theta_step ) ,
                 current_y + self.y_step * math.sin( current_theta + self.theta_step ) ,
-                np.rad2deg(current_theta + self.theta_step),
+                round(np.rad2deg(current_theta + self.theta_step)),
                 0
         ]
 
         right = [current_x + self.x_step * math.cos( current_theta - self.theta_step ) ,
                  current_y + self.y_step * math.sin( current_theta - self.theta_step ) ,
-                 np.rad2deg(current_theta - self.theta_step),
+                 round(np.rad2deg(current_theta - self.theta_step)),
                  0
         ]
 
         forward = [current_x + self.x_step * math.cos( current_theta ) ,
                    current_y + self.y_step * math.sin( current_theta ) ,
-                   np.rad2deg(current_theta),
+                   round(np.rad2deg(current_theta)),
                    0
         ]
 
         reverse = [current_x - self.x_step * math.cos( current_theta ) ,
                    current_y - self.y_step * math.sin( current_theta ) ,
-                   np.rad2deg(current_theta),
+                   round(np.rad2deg(current_theta)),
                    0
         ]
 
@@ -183,9 +184,4 @@ class edward_bot:
 
         return action_list
 
-# E = edward_bot(5,5,30,5)
-#
-#
-# next_nodes = E.next_action_set(25,25,30)
-#
-# print(next_nodes)
+
