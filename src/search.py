@@ -129,10 +129,10 @@ class search:
 
         dist = np.sqrt((x1-x2)**2 + (y1-y2)**2)
 
-        print('is',dist,' cm far from the goal')
+        # print('is',dist,' cm far from the goal')
 
         if dist <= self.goal_distance:
-            print('less than min goal_to_distance ')
+            # print('less than min goal_to_distance ')
             return True
         else:
             return False
@@ -149,7 +149,7 @@ class search:
         while not self.q.empty() and self.is_a_vaid_input == True:# and :
 
             node = self.q.get()      ##[0, [15, 20, 0]] --> [cost, [x,y,theta]]
-            print('node in while',node)
+            # print('node in while',node)
 
             x_new = node[1][0]
             y_new = node[1][1]
@@ -221,7 +221,7 @@ class search:
                         if self.node_info_dict[str(action_pos)] > temp:
                             self.node_info_dict[str(action_pos)] = temp + self.cost_to_go(action_pos)
 
-        print("out of the while")
+        # print("out of the while")
 
         self.node_path = []
 
@@ -236,7 +236,7 @@ class search:
                     parent =  self.node_info_parent_dict[str(parent)]
                     self.node_path.append(parent)
 
-                print("Out of this while too ")
+                # print("Out of this while too ")
 
                 self.node_path.reverse()
 
