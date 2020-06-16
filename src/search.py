@@ -1,5 +1,5 @@
-from src.robot import edward_bot
-from src.Map import Map_plot as maps
+from robot import edward_bot
+from Map import Map_plot as maps
 import queue
 import numpy as np
 import sys

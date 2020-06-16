@@ -1,6 +1,6 @@
 import math
 import numpy as np
-from src.Map import Map_plot as map
+from Map import Map_plot as map
 
 # class robot:
 #
