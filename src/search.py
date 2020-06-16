@@ -6,13 +6,14 @@ import sys
 import os
 
 class search:
-    def __init__(self,start_position,goal_position,map_supplied : maps,robot_supplied : edward_bot,s_no,initial_theta = 0):
+    def __init__(self,start_position,goal_position, goal_distance, map_supplied : maps,robot_supplied : edward_bot,s_no,initial_theta = 0):
 
         self.robot = robot_supplied
         self.start_position = start_position
         self.goal_position = goal_position
         self.initial_theta = initial_theta
         self.serial = s_no
+        self.goal_distance = goal_distance
 
         self.map = map_supplied
 
@@ -82,6 +83,24 @@ class search:
 
         return d
 
+    def is_near_goal(self, node):
+        # ( "distance between self.goal_position and node[1] is less than self.goal_distance")
+        x1 = node[0]
+        y1 = node[1]
+
+        x2 = self.goal_position[0]
+        y2 = self.goal_position[1]
+
+        dist = np.sqrt((x1-x2)**2 + (y1-y2)**2)
+
+        print('is',dist,' cm far from the goal')
+
+        if dist <= self.goal_distance:
+            print('less than min goal_to_distance ')
+            return True
+        else:
+            return False
+
     def A_star(self):
 
         iter1 = 0
@@ -102,13 +121,15 @@ class search:
             iter1+=1
             # print(iter1)
 
-            if [int(node[1][0]),int(node[1][1])] == self.goal_position:
+            # if ([int(node[1][0]),int(node[1][1])] == self.goal_position):
+
+            if ([int(node[1][0]),int(node[1][1])] == self.goal_position) or self.is_near_goal(node[1]):
                 print('goal reached',iter1)
                 self.goal_obtained = [node[1][0],node[1][1]]
                 self.goal_reached = True
                 break
             explored_nodes = self.robot.next_action_set(x_new,y_new,theta_new)
-            print(iter1, explored_nodes)
+            # print(iter1, explored_nodes)
 
             # action = np.array([new_x,new_y,new_theta,new_cost,action[0],action[1]])
             for action in explored_nodes:
@@ -118,7 +139,7 @@ class search:
                 action_theta = action[2]
                 action_cost = action[3]
 
-                print("action_pos = ",action_pos, "action_theta", action_theta, "action_cost", action_cost)
+                # print("action_pos = ",action_pos, "action_theta", action_theta, "action_cost", action_cost)
                 # action_velocities = [action[4],action[5],action_cost]
 
                 # if self.is_visited_check(action_pos) == False:
