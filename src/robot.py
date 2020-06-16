@@ -75,6 +75,115 @@ from src.Map import Map_plot as map
 #                 action_list.append(next_action)
 #         return action_list
 
+# class edward_bot:
+#
+#     # def __init__(self, robot_radius, x_step, y_step, theta_step, resolution, map_supplied :maps):
+#     def __init__(self,x_step, y_step, theta_step, resolution, map_supplied :map):
+#         '''
+#
+#         :param x_step: Step size in x-direction
+#         :param y_step: Step size in y-direction
+#         :param theta_step: Step size in the z-axis rotation in degrees
+#         :param resolution: resolution
+#         '''
+#
+#         # self.map = map_supplied
+#         self.res = resolution
+#         self.map = map_supplied
+#         # self.robot_radius = robot_radius
+#
+#         self.x_step =  x_step
+#         self.y_step = y_step
+#         self.theta_step = np.radians(theta_step)
+#         # self.clearance = clearance
+#
+#     def check_validity(self, action):
+#         '''
+#         Checks if a action is valid or not
+#         :param action: the action for which validity needs to be checked
+#         :return: returns a bool, if the action is valid or not
+#         '''
+#
+#         # validity = False
+#         new_x = action[0]
+#         new_y = action[1]
+#
+#         if new_x >=  self.map.x_min  and new_y >=  self.map.y_min and new_x <=  self.map.x_max and new_y <=  self.map.y_max:
+#             validity = True
+#
+#         else:
+#             validity = False
+#
+#         return validity
+#
+#     def calculate_cost(self, cur_x, cur_y, action):
+#         '''
+#         Calculate the cost in performing this action
+#         :param cur_x: Current x-coordinate
+#         :param cur_y: Current y-coordinate
+#         :param action: the action to which cost needs to be calculated
+#         :return: Returns the cost in float
+#         '''
+#
+#         x_new = action[0]
+#         y_new = action[1]
+#
+#         cost = round(np.sqrt((cur_x-x_new)**2 + (cur_y-y_new)**2))
+#
+#         return cost
+#
+#     def next_action_set(self,current_x,current_y,current_theta):
+#         '''
+#         Computes the next set of actions from the current state
+#         :param current_x: Current x-coordinate
+#         :param current_y: Current y-coordinate
+#         :param current_theta: Current z-axis orientation in degrees
+#         :return action_list: next valid actions
+#         '''
+#
+#         current_theta = np.radians(current_theta)
+#         action_list = []
+#
+#         left = [current_x + self.x_step * math.cos( current_theta + self.theta_step ) ,
+#                 current_y + self.y_step * math.sin( current_theta + self.theta_step ) ,
+#                 round(np.rad2deg(current_theta + self.theta_step)),
+#                 0
+#         ]
+#
+#         right = [current_x + self.x_step * math.cos( current_theta - self.theta_step ) ,
+#                  current_y + self.y_step * math.sin( current_theta - self.theta_step ) ,
+#                  round(np.rad2deg(current_theta - self.theta_step)),
+#                  0
+#         ]
+#
+#         forward = [current_x + self.x_step * math.cos( current_theta ) ,
+#                    current_y + self.y_step * math.sin( current_theta ) ,
+#                    round(np.rad2deg(current_theta)),
+#                    0
+#         ]
+#
+#         reverse = [current_x - self.x_step * math.cos( current_theta ) ,
+#                    current_y - self.y_step * math.sin( current_theta ) ,
+#                    round(np.rad2deg(current_theta)),
+#                    0
+#         ]
+#
+#         self.action_set = [ left ,
+#                        right,
+#                        forward,
+#                        reverse
+#         ]
+#
+#         for action in self.action_set:
+#             valid = self.check_validity(action)
+#
+#             if valid:
+#                 cost = self.calculate_cost(current_x,current_y, action)
+#                 action[3] = cost
+#                 action_list.append(action)
+#
+#         return action_list
+
 class edward_bot:
 
     # def __init__(self, robot_radius, x_step, y_step, theta_step, resolution, map_supplied :maps):
@@ -144,26 +253,26 @@ class edward_bot:
         current_theta = np.radians(current_theta)
         action_list = []
 
-        left = [current_x + self.x_step * math.cos( current_theta + self.theta_step ) ,
-                current_y + self.y_step * math.sin( current_theta + self.theta_step ) ,
+        left = [round(current_x + self.x_step * math.cos( current_theta + self.theta_step )) ,
+                round(current_y + self.y_step * math.sin( current_theta + self.theta_step )) ,
                 round(np.rad2deg(current_theta + self.theta_step)),
                 0
         ]
 
-        right = [current_x + self.x_step * math.cos( current_theta - self.theta_step ) ,
-                 current_y + self.y_step * math.sin( current_theta - self.theta_step ) ,
+        right = [round(current_x + self.x_step * math.cos( current_theta - self.theta_step )) ,
+                 round(current_y + self.y_step * math.sin( current_theta - self.theta_step )) ,
                  round(np.rad2deg(current_theta - self.theta_step)),
                  0
         ]
 
-        forward = [current_x + self.x_step * math.cos( current_theta ) ,
-                   current_y + self.y_step * math.sin( current_theta ) ,
+        forward = [round(current_x + self.x_step * math.cos( current_theta )) ,
+                   round(current_y + self.y_step * math.sin( current_theta )) ,
                    round(np.rad2deg(current_theta)),
                    0
         ]
 
-        reverse = [current_x - self.x_step * math.cos( current_theta ) ,
-                   current_y - self.y_step * math.sin( current_theta ) ,
+        reverse = [round(current_x - self.x_step * math.cos( current_theta ) ),
+                   round(current_y - self.y_step * math.sin( current_theta )) ,
                    round(np.rad2deg(current_theta)),
                    0
         ]
@@ -183,5 +292,3 @@ class edward_bot:
                 action_list.append(action)
 
         return action_list
-
-

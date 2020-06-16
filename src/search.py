@@ -28,7 +28,7 @@ class search:
         self.node_check_set.add(str(self.start_position_theta))
 
         self.node_info_dict = self.node_info_list(self.map.x_min,self.map.y_min,self.map.x_max,self.map.y_max)
-        self.node_info_dict[str(self.start_position)] = 0
+        self.node_info_dict[str([self.start_position])] = 0
 
         self.node_info_parent_dict = {}
         # self.node_info_velocities = {}
@@ -146,37 +146,23 @@ class search:
                 if self.is_visited_check(action_pos) == False:
 
                     if self.map.check_obs(action_pos) == False:
-                        # self.node_check_set.add(str([int(action_pos[0]),int(action_pos[1]), int(action_theta)])) ## marked as visited --> added to visited nodes ## str([d(act[0]),d(act[1])])
-                        self.node_check_set.add(str([action_pos[0], action_pos[1], action_theta])) ## marked as visited --> added to visited nodes ## str([d(act[0]),d(act[1])])
+                        self.node_check_set.add(str([action_pos[0], action_pos[1]])) ## marked as visited --> added to visited nodes ## str([d(act[0]),d(act[1])])
                         self.visited_node.append(action_pos)
-                        # print(str([int(action_pos[0]),int(action_pos[1])]))
                         cost = action_cost + self.node_info_dict[str([int(action_pos[0]),int(action_pos[1])])] + self.cost_to_go(action_pos)
                         self.node_info_dict[str([int(action_pos[0]),int(action_pos[1])])] = cost
 
                         self.q.put([cost,[action[0],action[1],action_theta]])
-                        # self.node_info_parent_dict[str([round(action_pos[0]), round(action_pos[1])])] = [round(node_pos[0]), round(node_pos[1])] #--> parent is updated to the node info
                         self.node_info_parent_dict[str(action_pos)] = node_pos #--> parent is updated to the node info
-                        # displayArray =updateAndDisplay(displayArray,[int(action[0]/displayRes),int(action[1]/displayRes)],3)
-                        # self.node_info_velocities[str(action_pos)] = action_velocities
-
 
                 else:
                     if self.map.check_obs(action_pos) == False:
                         temp = action_cost + self.node_info_dict[str(node_pos)]
                         if self.node_info_dict[str(action_pos)] > temp:
                             self.node_info_dict[str(action_pos)] = temp + self.cost_to_go(action_pos)
-                            self.node_info_parent_dict[str(action_pos)] = node_pos           #--> parent is updated to the node info
-                            # self.node_info_velocities[str(action_pos)] = action_velocities
-
 
         print("out of the while")
 
         self.node_path = []
-        # node_velocities_list = []
-
-        # print(self.node_info_parent_dict)
-        # print(zkch)
-
 
         if self.is_a_vaid_input == True:
             if self.goal_reached:
@@ -184,61 +170,23 @@ class search:
                 self.node_path.append(self.goal_obtained)
                 parent = self.node_info_parent_dict[str(self.goal_obtained)]
 
-                count = 0
-
                 while parent != self.start_position:
-                    # node_velocities_list.append(self.node_info_velocities[str(parent)])
+
                     parent =  self.node_info_parent_dict[str(parent)]
                     self.node_path.append(parent)
-
-                    # print(parent)
-                    # print("Stuck in this while")
-                    # print(self.node_path)
-                    count += 1
-                    if count >= 3000:
-                        print("about to stuck, will break")
-                        break
 
                 print("Out of this while too ")
 
                 self.node_path.reverse()
-                # node_velocities_list.reverse()
 
             else:
                 print('goal not reached')
         else:
             print('enter a valid input')
 
-        # node_vel_arr = np.asarray(node_velocities_list)
         node_path_arr = np.asarray(self.node_path)
 
-
-        # with open('node_path.txt', 'w') as node_path_file:
-        #
-        #     for i in node_path_arr:
-        #         t = np.empty([1,2])
-        #         t[0:,] = i
-        #         np.savetxt(node_path_file,t,delimiter='\t')
-        #
-
-        # velocity_list = []
-        # for velocity in node_vel_arr:
-        #     # print(velocity[0],velocity[1])
-        #     lin_x = (self.robot.rad/2)*(velocity[0] + velocity[1])
-        #     lin_y = (self.robot.rad/2)*(velocity[0] + velocity[1])
-        #     lin_z = 0
-        #
-        #     ang_x = 0
-        #     ang_y = 0
-        #     ang_z = (self.robot.rad/self.robot.len)*(velocity[0]- velocity[1])
-        #
-        #     velocity_list.append([lin_x,lin_y,lin_z,ang_x,ang_y,ang_z])
-        #
-        #
-        # velocity_array = np.asarray(velocity_list)
-        '''
-
-        base_name = 'converted_velocities'
+        base_name = 'track_positions'
         suffix = '.txt'
 
         fname = os.path.join(base_name + str(self.serial) + suffix)
@@ -252,7 +200,6 @@ class search:
                 p[0:,] = i
                 np.savetxt(velocities_file,p,delimiter='\t')
 
-        '''
         return self.node_path
 
 
