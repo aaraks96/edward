@@ -274,6 +274,18 @@ def calculate_pos(pos, angle, value, degree):
     print("Current position and orientation: ", pos, angle)
     return pos, angle
     
+def calculate_object_location(dist_to_obj, pos, angle):
+    x_obj = 0
+    y_obj = 0
+    x,y = pos[0], pos[1]
+    x_obj = x + dist_to_obj*round(np.cos(np.deg2rad(angle))*value, 2)
+    y_obj = y + dist_to_obj*round(np.sin(np.deg2rad(angle))*value, 2)
+    
+    return x_obj, y_obj
+    
+    
+    
+    
     
         
 def calculate_ticks(direction,value):  
@@ -426,22 +438,26 @@ arena_b = 1.50
 ######## NEW PIPELINE ##############
 
 pic_count = 0
+object_count = 0
+dist_to_obj = -1
+obstacle_dict = dict()
 #1. Create a map of the arena
 #start at (0,0) oriented at 0
 #turn 45 degrees and take a picture
 pos, angle = left(45, pos, angle)  # maneuver 1
 pic = get_pic()
+cv2.imwrite('image_'+str(pic_count)+'.jpeg', pic)
+pic_count+=1
 pos, angle, flag = self_orient(pic,pos,angle) #oriented (or not) with target.
 
 if flag == False:
     continue
 else:
-    dist_to_obs = distance()
-    
-    
-    
-cv2.imwrite('image_'+str(pic_count)+'.jpeg', pic)
-pic_count+=1
+    object_count+=1
+    dist_to_obj = distance()
+    x_obj, y_obj = calculate_object_location(dist_to_obj, pos, angle)
+    obstacle_dict["obstacle_"+str(object_count)] = {"position": [x_obj, y_obj]}
+
 
 #go back to orientation 0. 
 pos, angle = right(45, pos, angle)  # maneuver 1
@@ -453,6 +469,16 @@ pos, angle = left(90, pos, angle)  # maneuver 4
 pic = get_pic()
 cv2.imwrite('image_'+str(pic_count)+'.jpeg', pic)
 pic_count+=1
+pos, angle, flag = self_orient(pic,pos,angle) #oriented (or not) with target.
+
+if flag == False:
+    continue
+else:
+    object_count+=1
+    dist_to_obj = distance()
+    x_obj, y_obj = calculate_object_location(dist_to_obj, pos, angle)
+    obstacle_dict["obstacle_"+str(object_count)] = {"position": [x_obj, y_obj]}
+
 
 #go back to orientation 0. 
 pos, angle = right(90, pos, angle)  # maneuver 5
@@ -465,6 +491,16 @@ pos, angle = left(135, pos, angle)  # maneuver 7
 pic = get_pic()
 cv2.imwrite('image_'+str(pic_count)+'.jpeg', pic)
 pic_count+=1
+pos, angle, flag = self_orient(pic,pos,angle) #oriented (or not) with target.
+
+if flag == False:
+    continue
+else:
+    object_count+=1
+    dist_to_obj = distance()
+    x_obj, y_obj = calculate_object_location(dist_to_obj, pos, angle)
+    obstacle_dict["obstacle_"+str(object_count)] = {"position": [x_obj, y_obj]}
+
 
 #go back to orientation 0. 
 pos, angle = right(45, pos, angle)  # maneuver 8
@@ -476,6 +512,16 @@ pos, angle = left(90, pos, angle)  # maneuver 10
 pic = get_pic()
 cv2.imwrite('image_'+str(pic_count)+'.jpeg', pic)
 pic_count+=1
+pos, angle, flag = self_orient(pic,pos,angle) #oriented (or not) with target.
+
+if flag == False:
+    continue
+else:
+    object_count+=1
+    dist_to_obj = distance()
+    x_obj, y_obj = calculate_object_location(dist_to_obj, pos, angle)
+    obstacle_dict["obstacle_"+str(object_count)] = {"position": [x_obj, y_obj]}
+
 
 #go back to orientation 0. 
 pos, angle = right(90, pos, angle)  # maneuver 11
@@ -488,6 +534,16 @@ pos, angle = left(135, pos, angle)  # maneuver 13
 pic = get_pic()
 cv2.imwrite('image_'+str(pic_count)+'.jpeg', pic)
 pic_count+=1
+pos, angle, flag = self_orient(pic,pos,angle) #oriented (or not) with target.
+
+if flag == False:
+    continue
+else:
+    object_count+=1
+    dist_to_obj = distance()
+    x_obj, y_obj = calculate_object_location(dist_to_obj, pos, angle)
+    obstacle_dict["obstacle_"+str(object_count)] = {"position": [x_obj, y_obj]}
+
 
 #go back to orientation 0. 
 pos, angle = right(45, pos, angle)  # maneuver 14
@@ -499,6 +555,16 @@ pos, angle = left(90, pos, angle)  # maneuver 16
 pic = get_pic()
 cv2.imwrite('image_'+str(pic_count)+'.jpeg', pic)
 pic_count+=1
+pos, angle, flag = self_orient(pic,pos,angle) #oriented (or not) with target.
+
+if flag == False:
+    continue
+else:
+    object_count+=1
+    dist_to_obj = distance()
+    x_obj, y_obj = calculate_object_location(dist_to_obj, pos, angle)
+    obstacle_dict["obstacle_"+str(object_count)] = {"position": [x_obj, y_obj]}
+
 
 #go back to orientation 0. 
 pos, angle = right(90, pos, angle)  # maneuver 17
@@ -511,6 +577,16 @@ pos, angle = left(135, pos, angle)  # maneuver 19
 pic = get_pic()
 cv2.imwrite('image_'+str(pic_count)+'.jpeg', pic)
 pic_count+=1
+pos, angle, flag = self_orient(pic,pos,angle) #oriented (or not) with target.
+
+if flag == False:
+    continue
+else:
+    object_count+=1
+    dist_to_obj = distance()
+    x_obj, y_obj = calculate_object_location(dist_to_obj, pos, angle)
+    obstacle_dict["obstacle_"+str(object_count)] = {"position": [x_obj, y_obj]}
+
 
 #go back to orientation 0. 
 pos, angle = right(45, pos, angle)  # maneuver 20
@@ -522,12 +598,27 @@ pos, angle = left(90, pos, angle)  # maneuver 22
 pic = get_pic()
 cv2.imwrite('image_'+str(pic_count)+'.jpeg', pic)
 pic_count+=1
+pos, angle, flag = self_orient(pic,pos,angle) #oriented (or not) with target.
+
+if flag == False:
+    continue
+else:
+    object_count+=1
+    dist_to_obj = distance()
+    x_obj, y_obj = calculate_object_location(dist_to_obj, pos, angle)
+    obstacle_dict["obstacle_"+str(object_count)] = {"position": [x_obj, y_obj]}
+
 
 #go back to orientation 0. 
 pos, angle = right(90, pos, angle)  # maneuver 23
 
 #go to next checkpoint 
 pos, angle = forward(arena_b/2, pos, angle)  # maneuver 24
+
+print(obstacle_dict)
+
+print("END OF MAPPING....")
+
 
 #2. Assign object locations and boundaries #get distance, calculate coordinates
 
