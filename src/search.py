@@ -57,6 +57,7 @@ class search:
 
 
     def valid_start_goal(self):
+
         # status = True
 
         if (self.map.check_obs(self.start_position) or self.map.check_obs(self.goal_position)):
