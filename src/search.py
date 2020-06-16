@@ -7,6 +7,16 @@ import os
 
 class search:
     def __init__(self,start_position,goal_position, goal_distance, map_supplied : maps,robot_supplied : edward_bot,s_no,initial_theta = 0):
+        '''
+        This Class implements a search algorithm. Currently supports only A* algorithm.
+        :param start_position: The start position of the robot
+        :param goal_position: The goal position of the robot
+        :param goal_distance: The distance where the search algorithm has to stop
+        :param map_supplied: The Map object createf for the environment
+        :param robot_supplied: The Robot object created for the Robot
+        :param s_no: The serial number of the robot. Starting from 1
+        :param initial_theta: The initial theta (orientation of the robot in z-direction) of the Robot
+        '''
 
         self.robot = robot_supplied
         self.start_position = start_position
@@ -41,12 +51,24 @@ class search:
 
         # self.current_node = self.start_position
 
-    ## to check if the node is visited
     def is_visited_check(self,node):
+        '''
+        Check whether a node has been already visited
+        :param node: Current node which has to be checked
+        :return: True or False
+        '''
         return str(node) in self.node_check_set
 
 
     def node_info_list(self,min_x,min_y,max_x,max_y):
+        '''
+        Creates all the nodes along with infinite cost as a dictionary
+        :param min_x: minimum x-value
+        :param min_y: minimum y-value
+        :param max_x: maximum x-value
+        :param max_y: maximum y-value
+        :return: Returns the dictionary with Nodes and their initial costs
+        '''
         loc = []
         for i in range(int(min_x),int(max_x),1):
             for j in range(int(min_y),int(max_y),1):
@@ -58,6 +80,10 @@ class search:
 
 
     def valid_start_goal(self):
+        '''
+        Check if the start position and goal positions are Valid
+        :return: Returns True or False
+        '''
 
         # status = True
 
@@ -72,6 +98,11 @@ class search:
 
 
     def cost_to_go(self,current_node):
+        '''
+        Computes the cost to go to goal from the current position
+        :param current_node: The current node
+        :return:
+        '''
 
         x1 = current_node[0]
         y1 = current_node[1]
@@ -84,6 +115,11 @@ class search:
         return d
 
     def is_near_goal(self, node):
+        '''
+        Computes if the current node is near to goal
+        :param node: Current position of the node
+        :return: True or False
+        '''
         # ( "distance between self.goal_position and node[1] is less than self.goal_distance")
         x1 = node[0]
         y1 = node[1]
@@ -102,6 +138,10 @@ class search:
             return False
 
     def A_star(self):
+        '''
+        Implements the A-Star search Algorithm
+        :return: Returns the path from start position to goal position
+        '''
 
         iter1 = 0
         self.node_path_temp = []
